@@ -1,0 +1,327 @@
+// Database Schema for NACC Asset Declaration System
+// Generated from CSV schema definition
+
+Table doc_info {
+  doc_id integer [pk, not null, note: 'เลขที่เอกสารในระบบ']
+  doc_location_url varchar(500) [not null, note: 'ที่อยู่เอกสาร (GCS Link)']
+  type_id integer [not null, ref: > doc_type_info.type_id, note: 'เลขอ้างอิงประเภทเอกสารที่อาสากรอก']
+  ref_id integer [not null, note: 'เลขอ้างอิงเลขที่เอกสารของประเภทเอกสารต่าง ๆ']
+}
+
+Table doc_type_info {
+  type_id integer [pk, not null, note: 'เลขอ้างอิงประเภทเอกสารที่อาสากรอก']
+  type_name varchar(100) [not null, note: 'ชื่อประเภทเอกสารที่อาสากรอก']
+}
+
+Table nacc_detail {
+  doc_id integer [pk, not null, ref: - doc_info.doc_id, note: 'เลขที่เอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขอ้างอิงเลขที่เอกสารของประเภทเอกสารข้อมูลบัญชีทรัพสินและหนี้สิน']
+  title varchar(100) [not null, note: 'คำนำหน้าชื่อ']
+  first_name varchar(100) [not null, note: 'ชื่อ']
+  last_name varchar(100) [not null, note: 'นามสกุล']
+  position varchar(200) [not null, note: 'ตำแหน่ง']
+  submitted_case varchar(100) [note: 'กรณีที่ยื่น']
+  submitted_date date [note: 'วันที่มีหน้าที่ยื่น']
+  disclosure_announcement_date date [not null, note: 'วันที่ประกาศเปิดเผยบัญชี']
+  disclosure_start_date date [note: 'วันที่เริ่มเปิดเผย']
+  disclosure_end_date date [note: 'วันที่สิ้นสุด']
+  agency varchar(1000) [note: 'สังกัด/หน่วยงาน']
+  date_by_submitted_case date [note: 'วันที่เข้ารับตำแหน่ง']
+  royal_start_date date [note: 'วันที่มีพระบรมราชโองการแต่งตั้งหรือคำสั่งแต่งตั้ง']
+  create_at timestamp [not null, note: 'วันที่สร้างข้อมูลใน Database']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+}
+
+Table submitter_info {
+  submitter_id integer [pk, not null, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  title varchar(100) [not null, note: 'คำนำหน้าชื่อ']
+  first_name varchar(100) [not null, note: 'ชื่อ']
+  last_name varchar(100) [not null, note: 'นามสกุล']
+  title_en varchar(100) [note: 'คำนำหน้าชื่อ ภาษาอังกฤษ']
+  first_name_en varchar(100) [note: 'ชื่อ ภาษาอังกฤษ']
+  last_name_en varchar(100) [note: 'นามสกุล ภาษาอังกฤษ']
+  age integer [not null, note: 'อายุ']
+  status varchar(100) [note: 'สถานะการสมรส']
+  status_date varchar(2) [note: 'วันที่มีการแจ้งสถานภาพสมรส']
+  status_month varchar(2) [note: 'เดือนที่มีการแจ้งสถานภาพสมรส']
+  status_year varchar(4) [note: 'ปีที่มีการแจ้งสถานภาพสมรส']
+  sub_district varchar(100) [not null, note: 'ตำบล/แขวง']
+  district varchar(100) [not null, note: 'อำเภอ/เขต']
+  province varchar(100) [not null, note: 'จังหวัด']
+  post_code varchar(10) [note: 'รหัสไปรษณีย์']
+  phone_number varchar(20) [note: 'โทรศัพท์']
+  mobile_number varchar(20) [note: 'โทรศัพท์มือถือ']
+  email varchar(100) [note: 'E-mail']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
+
+Table submitter_old_name {
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  index integer [not null, note: 'เลขลำดับที่']
+  title varchar(100) [not null, note: 'คำนำหน้าชื่อ']
+  first_name varchar(100) [not null, note: 'ชื่อ']
+  last_name varchar(100) [not null, note: 'นามสกุล']
+  title_en varchar(100) [not null, note: 'คำนำหน้าชื่อ ภาษาอังกฤษ']
+  first_name_en varchar(100) [not null, note: 'ชื่อ ภาษาอังกฤษ']
+  last_name_en varchar(100) [not null, note: 'นามสกุล ภาษาอังกฤษ']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  
+  indexes {
+    (submitter_id, nacc_id, index) [pk]
+  }
+}
+
+Table position_period_type {
+  position_period_type_id integer [pk, not null, note: 'เลขที่ประเภทการดำรงตำแหน่ง']
+  position_period_type_name varchar(100) [not null, note: 'ชื่อประเภทการดำรงตำแหน่ง']
+}
+
+Table position_category_type {
+  position_category_id integer [pk, not null, note: 'เลขที่ประเภทของกลุ่มในการดำรงตำแหน่ง']
+  corrupt0_category varchar(100) [not null, note: 'ประเภทของเอกสารในระบบของ Corrupt0']
+  nacc_category_number integer [not null, note: 'ประเภทหลักของมาตรา']
+  nacc_category varchar(100) [not null, note: 'ประเภทของเอกสารในระบบของข้อมูลบัญชีทรัพสินและหนี้สิน']
+  nacc_sub_category_number varchar(100) [not null, note: 'ประเภทรองของมาตรา']
+  nacc_sub_category varchar(100) [not null, note: '(กลุ่มตำแหน่ง) sub-category']
+}
+
+Table submitter_position {
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  position_period_type_id integer [not null, ref: > position_period_type.position_period_type_id, note: 'เลขที่ประเภทการดำรงตำแหน่ง']
+  index integer [not null, note: 'เลขลำดับที่']
+  position varchar(200) [not null, note: 'ตำแหน่ง']
+  position_category_type_id varchar(200) [not null, note: 'หมวดหมู่ตำแหน่ง']
+  workplace varchar(200) [note: 'สถานที่ทำงาน']
+  workplace_location varchar(200) [note: 'ที่อยู่สถานที่ทำงาน']
+  date_acquiring_type_id integer [not null, ref: > date_acquiring_type.date_acquiring_type_id, note: 'เลขที่ประเภทของวันที่ได้มาในระบบ']
+  start_date varchar(2) [not null, note: 'วันที่เริ่มดำรงตำแหน่ง']
+  start_month varchar(2) [note: 'เดือนที่เริ่มดำรงตำแหน่ง']
+  start_year varchar(4) [note: 'ปีที่เริ่มดำรงตำแหน่ง']
+  date_ending_type_id integer [ref: > date_ending_type.date_ending_type_id, note: 'เลขที่ประเภทของวันที่สิ้นสุดในระบบ']
+  end_date varchar(2) [note: 'วันที่ออกจากดำรงตำแหน่ง']
+  end_month varchar(2) [note: 'เดือนที่ออกจากดำรงตำแหน่ง']
+  end_year varchar(4) [note: 'ปีที่เริ่มออกจากดำรงตำแหน่ง']
+  note varchar(500) [note: 'หมายเหตุ']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  
+  indexes {
+    (submitter_id, nacc_id, position_period_type_id, index) [pk]
+  }
+}
+
+Table spouse_info {
+  spouse_id integer [pk, not null, note: 'เลขที่คู่สมรสผู้ยื่นเอกสารในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  title varchar(100) [not null, note: 'คำนำหน้าชื่อคู่สมรส']
+  first_name varchar(100) [not null, note: 'ชื่อคู่สมรส']
+  last_name varchar(100) [not null, note: 'นามสกุลคู่สมรส']
+  title_en varchar(100) [not null, note: 'คำนำหน้าชื่อคู่สมรส ภาษาอังกฤษ']
+  first_name_en varchar(100) [not null, note: 'ชื่อคู่สมรส ภาษาอังกฤษ']
+  last_name_en varchar(100) [not null, note: 'นามสกุลคู่สมรส ภาษาอังกฤษ']
+  age integer [note: 'อายุ']
+  status varchar(100) [note: 'สถานะการสมรส']
+  status_date varchar(2) [note: 'วันที่มีการแจ้งสถานภาพสมรส']
+  status_month varchar(2) [note: 'เดือนที่มีการแจ้งสถานภาพสมรส']
+  status_year varchar(4) [note: 'ปีที่มีการแจ้งสถานภาพสมรส']
+  sub_district varchar(100) [note: 'ตำบล/แขวง']
+  district varchar(100) [note: 'อำเภอ/เขต']
+  province varchar(100) [note: 'จังหวัด']
+  post_code varchar(10) [note: 'รหัสไปรษณีย์']
+  phone_number varchar(20) [note: 'โทรศัพท์']
+  mobile_number varchar(20) [note: 'โทรศัพท์มือถือ']
+  email varchar(100) [note: 'E-mail']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
+
+Table spouse_old_name {
+  spouse_id integer [not null, ref: > spouse_info.spouse_id, note: 'เลขที่คู่สมรสผู้ยื่นเอกสารในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  index varchar(100) [not null, note: 'เลขลำดับที่']
+  title varchar(100) [note: 'คำนำหน้าเดิมคู่สมรส']
+  first_name varchar(100) [note: 'ชื่อเดิมคู่สมรส']
+  last_name varchar(100) [note: 'นามสกุลเดิมคู่สมรส']
+  title_en varchar(100) [note: 'คำนำหน้าเดิมคู่สมรส ภาษาอังกฤษ']
+  first_name_en varchar(100) [note: 'ชื่อเดิมคู่สมรส ภาษาอังกฤษ']
+  last_name_en varchar(100) [note: 'นามสกุลเดิมคู่สมรส ภาษาอังกฤษ']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  
+  indexes {
+    (spouse_id, submitter_id, nacc_id, index) [pk]
+  }
+}
+
+Table spouse_position {
+  spouse_id integer [not null, ref: > spouse_info.spouse_id, note: 'เลขที่คู่สมรสผู้ยื่นเอกสารในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  position_period_type_id integer [not null, ref: > position_period_type.position_period_type_id, note: 'เลขที่ประเภทการดำรงตำแหน่ง']
+  index integer [not null, note: 'เลขลำดับที่']
+  position varchar(200) [not null, note: 'ตำแหน่ง']
+  workplace varchar(200) [note: 'สถานที่ทำงาน']
+  workplace_location varchar(200) [note: 'ที่อยู่สถานที่ทำงาน']
+  note varchar(500) [note: 'หมายเหตุ']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  
+  indexes {
+    (spouse_id, submitter_id, nacc_id, position_period_type_id, index) [pk]
+  }
+}
+
+Table relationship {
+  relationship_id integer [pk, not null, note: 'เลขที่ประเภทเครือญาติในระบบ']
+  relationship_name varchar(100) [not null, note: 'ชื่อประเภทเครือญาติ']
+}
+
+Table relative_info {
+  relative_id integer [pk, not null, note: 'เลขที่ญาติผู้ยื่นเอกสารในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  index integer [not null, note: 'เลขลำดับที่']
+  relationship_id integer [not null, ref: > relationship.relationship_id, note: 'เลขที่ประเภทลำดับเครือญาติ']
+  title varchar(100) [note: 'คำนำหน้าชื่อ']
+  first_name varchar(100) [not null, note: 'ชื่อ']
+  last_name varchar(100) [not null, note: 'นามสกุล']
+  age integer [note: 'อายุ']
+  address varchar(500) [note: 'ที่อยู่']
+  occupation varchar(100) [note: 'อาชีพ']
+  school varchar(200) [note: 'สถานศึกษา']
+  workplace varchar(200) [note: 'สถานที่ทำงาน']
+  workplace_location varchar(200) [note: 'ที่อยู่สถานที่ทำงาน']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  is_death boolean [not null, note: 'ตาย']
+}
+
+Table statement_type {
+  statement_type_id integer [pk, not null, note: 'เลขที่ประเภทรายการในระบบ']
+  statement_type_name varchar(100) [not null, note: 'ชื่อประเภทรายการในระบบ']
+}
+
+Table statement {
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  statement_type_id integer [not null, ref: > statement_type.statement_type_id, note: 'เลขที่ประเภทรายการในระบบ']
+  valuation_submitter "double precision" [note: 'มูลค่าของผู้ยื่น']
+  valuation_spouse "double precision" [note: 'มูลค่าของคู่สมรส']
+  valuation_child "double precision" [note: 'มูลค่าของลูก']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  
+  indexes {
+    (submitter_id, nacc_id, statement_type_id) [pk]
+  }
+}
+
+Table statement_detail_type {
+  statement_detail_type_id integer [pk, not null, note: 'เลขที่ประเภทของรายละเอียดรายการในระบบ']
+  statement_type_id integer [not null, ref: > statement_type.statement_type_id, note: 'เลขที่ประเภทรายการในระบบ']
+  statement_detail_sub_type_name varchar(100) [not null, note: 'ชื่อประเภทของรายละเอียดรายการรอง']
+}
+
+Table statement_detail {
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  statement_detail_type_id integer [not null, ref: > statement_detail_type.statement_detail_type_id, note: 'เลขที่ประเภทของรายการในระบบ']
+  index integer [not null, note: 'เลขลำดับที่']
+  detail varchar(100) [not null, note: 'รายละเอียด']
+  valuation_submitter "double precision" [note: 'มูลค่าของผู้ยื่น']
+  valuation_spouse "double precision" [note: 'มูลค่าของคู่สมรส']
+  valuation_child "double precision" [note: 'มูลค่าของลูก']
+  note varchar(500) [note: 'หมายเหตุ']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+  
+  indexes {
+    (nacc_id, submitter_id, statement_detail_type_id, index) [pk]
+  }
+}
+
+Table asset_type {
+  asset_type_id integer [pk, not null, note: 'เลขที่ประเภทของสินทรัพย์ในระบบ']
+  asset_type_main_type_name varchar(100) [not null, note: 'ชื่อประเภทของสินทรัพย์หลัก : ที่ดิน, ยานพาหนะ, โรงเรือนและสิ่งปลูกสร้าง, สิทธิสัมปทาน, ทรัพย์สินอื่น']
+  asset_type_sub_type_name varchar(100) [not null, note: 'ชื่อประเภทของสินทรัพย์รอง ได้จาก กลุ่มทรัพย์สินอื่น, ประเภทสิ่งปลูกสร้าง, ประเภทยานพาหนะ']
+}
+
+Table asset_acquisition_type {
+  asset_acquisition_type_id integer [pk, not null, note: 'เลขที่ประเภทของการได้มาของสินทรัพย์ในระบบ']
+  asset_acquisition_type_name varchar(100) [not null, note: 'ชื่อประเภทของการได้มาของสินทรัพย์ในระบบ']
+}
+
+Table date_acquiring_type {
+  date_acquiring_type_id integer [pk, not null, note: 'เลขที่ประเภทของวันที่ได้มาในระบบ']
+  date_acquiring_type_name varchar(100) [not null, note: 'ชื่อประเภทของวันที่ได้มาในระบบ']
+}
+
+Table date_ending_type {
+  date_ending_type_id integer [pk, not null, note: 'เลขที่ประเภทของวันที่สิ้นสุดในระบบ']
+  date_ending_type_name varchar(100) [not null, note: 'ชื่อประเภทของวันที่สิ้นสุดในระบบ']
+}
+
+Table asset {
+  asset_id integer [pk, not null, note: 'เลขที่สินทรัพย์ในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  index integer [not null, note: 'เลขลำดับที่']
+  asset_type_id integer [not null, ref: > asset_type.asset_type_id, note: 'เลขที่ประเภทของสินทรัพย์ในระบบ']
+  asset_type_other varchar(100) [not null, note: 'ประเภทเอกสารแบบอื่น ๆ']
+  asset_name varchar(500) [note: 'ชื่อรายการทรัพย์สินตามเอกสาร (เช่น รถเก๋งสอนตอน, แหวนทองคำ)']
+  date_acquiring_type_id integer [not null, ref: > date_acquiring_type.date_acquiring_type_id, note: 'เลขที่ประเภทของวันที่ได้มาของสินทรัพย์ในระบบ']
+  acquiring_date varchar(2) [note: 'วันที่เริ่มครอบครอง']
+  acquiring_month varchar(2) [note: 'เดือนที่เริ่มครอบครอง']
+  acquiring_year varchar(4) [note: 'ปีที่เริ่มครอบครอง']
+  date_ending_type_id integer [not null, ref: > date_ending_type.date_ending_type_id, note: 'เลขที่ประเภทของวันที่สิ้นสุดของสินทรัพย์ในระบบ']
+  ending_date varchar(2) [note: 'วันที่สิ้นสุดการครอบครอง']
+  ending_month varchar(2) [note: 'เดือนที่สิ้นสุดการดำรงตำแหน่ง']
+  ending_year varchar(4) [note: 'ปีที่สิ้นสุดการดำรงตำแหน่ง']
+  asset_acquisition_type_id integer [ref: > asset_acquisition_type.asset_acquisition_type_id, note: 'เลขที่ประเภทของการได้มาของสินทรัพย์ในระบบ']
+  valuation "double precision" [not null, note: 'มูลค่าสินทรัพย์']
+  owner_by_submitter boolean [not null, note: 'สินทรัพย์ของผู้ยื่น']
+  owner_by_spouse boolean [not null, note: 'สินทรัพย์ของคู่สมรส']
+  owner_by_child boolean [not null, note: 'สินทรัพย์ของบุตร']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
+
+Table asset_building_info {
+  asset_id integer [pk, not null, ref: - asset.asset_id, note: 'เลขที่สินทรัพย์ในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  building_doc_number varchar(100) [not null, note: 'เลขที่เอกสารสิทธิ์']
+  sub_district varchar(100) [note: 'ตำบล/แขวง']
+  district varchar(100) [note: 'อำเภอ/เขต']
+  province varchar(100) [not null, note: 'จังหวัด']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
+
+Table asset_land_info {
+  asset_id integer [pk, not null, ref: - asset.asset_id, note: 'เลขที่สินทรัพย์ในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  land_doc_number varchar(100) [note: 'เลขที่เอกสารสิทธิ์']
+  rai "double precision" [not null, note: 'ไร่']
+  ngan "double precision" [not null, note: 'งาน']
+  sq_wa "double precision" [not null, note: 'ตารางวา']
+  sub_district varchar(100) [note: 'ตำบล/แขวง']
+  district varchar(100) [note: 'อำเภอ/เขต']
+  province varchar(100) [note: 'จังหวัด']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
+
+Table asset_vehicle_info {
+  asset_id integer [pk, not null, ref: - asset.asset_id, note: 'เลขที่สินทรัพย์ในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  registration_number varchar(50) [not null, note: 'เลขทะเบียน']
+  vehicle_model varchar(100) [note: 'ยี่ห้อ']
+  province varchar(100) [not null, note: 'ป้ายทะเบียนจังหวัด']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
+
+Table asset_other_asset_info {
+  asset_id integer [pk, not null, ref: - asset.asset_id, note: 'เลขที่สินทรัพย์ในระบบ']
+  submitter_id integer [not null, ref: > submitter_info.submitter_id, note: 'เลขที่ผู้ยื่นเอกสารในระบบ']
+  nacc_id integer [not null, note: 'เลขที่เอกสารในระบบ']
+  count integer [not null, note: 'จำนวน']
+  unit varchar(100) [note: 'หน่วย']
+  latest_submitted_date date [not null, note: 'วันที่ยื่นล่าสุด']
+}
